@@ -4,16 +4,6 @@ aliases:
         name: node/node
         node-version: "10-buster"
 
-  - &release_filter
-      branches:
-        only:
-          - master
-
-  - &pull_request_filter
-      branches:
-        ignore:
-          - master
-
 version: 2.1
 
 orbs:
@@ -58,6 +48,7 @@ jobs:
       - run:
           name: "Configure Git user"
           command: |
+            env
             git config user.email $GIT_USER_EMAIL
             git config user.name $GIT_USER_NAME
       - run:
@@ -114,27 +105,8 @@ jobs:
 
 workflows:
   version: 2
-
-  pull_request:
-    jobs:
-      - test:
-          filters:
-            <<: *pull_request_filter
-      - build:
-          filters:
-            <<: *pull_request_filter
-      - ci/validate-commits:
-          filters:
-            <<: *pull_request_filter
-
   release:
     jobs:
-      - test:
-          filters:
-            <<: *release_filter
-      - build:
-          filters:
-            <<: *release_filter
       - approve:
           type: approval
           requires:
